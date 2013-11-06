@@ -1,0 +1,199 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace inputArray
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+//создаем матрицы и все такое
+            int flag = 1;
+            Console.Write("Количество элиментов графа: ");
+            int n = int.Parse(Console.ReadLine());
+            int x;
+            int[,] mas = new int[n, n];
+            int[] T1 = new int[n];
+            int[] T2 = new int[n];
+//заполнение с клавиатуры
+            Console.WriteLine("Заполните матрицу: ");
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    do
+                    {
+                        Console.Write("Введите строку " + i + " и столбец " + j + ": ");
+                        mas[i, j] = int.Parse(Console.ReadLine());
+                    }
+                    while ((mas[i, j] != 1) && (mas[i, j] != 0));
+                }
+            }
+            Console.Clear();
+//вывод матрицы на экран
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    Console.Write(mas[i, j] + " ");
+                }
+                Console.WriteLine();
+            }
+//выбор стартовой вершины и создание векторов замыканий
+            Console.WriteLine("Введите стартовую вершину: ");
+            x = int.Parse(Console.ReadLine());
+            Console.WriteLine("TX(+):");
+            T1[x - 1] = 1;
+            for (int i = 0; i < T1.Length; i++)
+            {
+                if (mas[x - 1, i] == 1)
+                {
+                    T1[i] = 1;
+                    for (int j = 0; j < T1.Length; j++)
+                    {
+                        if (mas[j, i] == 1)
+                            T1[j] = 1;
+                    }
+                }
+            }
+            for (int i = 0; i < T1.Length; i++)
+            {
+                Console.Write(T1[i] + " ");
+            }
+            Console.WriteLine();
+            Console.WriteLine("TX(-):");
+            T2[x - 1] = 1;
+            for (int i = 0; i < T2.Length; i++)
+            {
+                if (mas[i, x - 1] == 1)
+                {
+                    T2[i] = 1;
+                    for (int j = 0; j < T2.Length; j++)
+                    {
+                        if (mas[i, j] == 1)
+                            T2[j] = 1;
+                    }
+                }
+            }
+            for (int i = 0; i < T2.Length; i++)
+            {
+                Console.Write(T2[i] + " ");
+            }
+//создание первой результирующей матрицы и вывод ее на экран
+            int temp = n;
+            for (int i = 0; i < T1.Length; i++)
+            {
+                if ((T1[i] == 1) && (T2[i] == 1))
+                    temp--;
+            }
+            int[,] result = new int[temp, temp];
+            for (int i = 0; i < temp; i++)
+            {
+                for (int j = 0; j < temp; j++ )
+                    if (((T1[i] == 1) && (T2[i] == 0)) || ((T1[i] == 0) && (T2[i] == 1)))
+                    {
+                        result[i, j] = mas[i, j];
+                    }
+            }
+            Console.WriteLine();
+            Console.WriteLine("Результат:");
+            for (int i = 0; i < temp; i++)
+            {
+                for (int j = 0; j < temp; j++)
+                {
+                    Console.Write(result[i, j] + " ");
+                }
+                Console.WriteLine();
+            }
+//цикл создания новых векторов транзитивных замыканий, выбора стартовой вершины и создания результирующих матриц
+            Console.WriteLine("Производить вычисления дальше? 1 - да");
+            flag = int.Parse(Console.ReadLine());
+            if (flag != 1)
+                goto end;
+            else
+            {
+                while (flag == 1)
+                {
+                    int[,] mastemp = new int[temp, temp];
+                    for (int i = 0; i < temp; i++)
+                    {
+                        for (int j = 0; j < temp; j++)
+                            mastemp[i, j] = result[i, j];
+                    }
+                    Console.Write("Введите стартовую вершину: ");
+                    x = int.Parse(Console.ReadLine());
+                    Console.WriteLine();
+//новые векторы транзитивных замыканий
+                    T1 = new int[temp];
+                    T2 = new int[temp];
+                    Console.WriteLine("TX(+):");
+                    T1[x - 1] = 1;
+                    for (int i = 0; i < T1.Length; i++)
+                    {
+                        if (result[x - 1, i] == 1)
+                        {
+                            T1[i] = 1;
+                            for (int j = 0; j < T1.Length; j++)
+                            {
+                                if (result[j, i] == 1)
+                                    T1[j] = 1;
+                            }
+                        }
+                    }
+                    for (int i = 0; i < T1.Length; i++)
+                    {
+                        Console.Write(T1[i] + " ");
+                    }
+                    Console.WriteLine();
+                    Console.WriteLine("TX(-):");
+                    T2[x - 1] = 1;
+                    for (int i = 0; i < T2.Length; i++)
+                    {
+                        if (result[i, x - 1] == 1)
+                        {
+                            T2[i] = 1;
+                            for (int j = 0; j < T2.Length; j++)
+                            {
+                                if (result[i, j] == 1)
+                                    T2[j] = 1;
+                            }
+                        }
+                    }
+//новая результирующая матрица
+                    temp = 0;
+                    for (int i = 0; i < T1.Length; i++)
+                    {
+                        if (((T1[i] == 1) && (T2[i] == 0)) || ((T1[i] == 0) && (T2[i] == 1)))
+                            temp++;
+                    }
+                    result = new int[temp, temp];
+                    for (int i = 0; i < temp; i++)
+                    {
+                        for (int j = 0; j < temp; j++)
+                        {
+                            if (((T1[i] == 1) && (T2[i] == 0)) || ((T1[i] == 0) && (T2[i] == 1)))
+                                result[i, j] = mastemp[i, j];
+                        }
+                    }
+                    Console.WriteLine();
+                    Console.WriteLine("Результат:");
+                    for (int i = 0; i < temp; i++)
+                    {
+                        for (int j = 0; j < temp; j++)
+                        {
+                            Console.Write(result[i, j] + " ");
+                        }
+                        Console.WriteLine();
+                    }
+                    Console.WriteLine("Производить вычисления дальше? 1 - да");
+                    flag = int.Parse(Console.ReadLine());
+
+                }
+            }
+end:        Console.ReadKey();
+        }
+    }
+}
