@@ -12,6 +12,7 @@ namespace inputArray
         {
 //создаем матрицы и все такое
             int flag = 1;
+            Console.Write("Лаба Дмитрия Владимировича ");
             Console.Write("Количество элиментов графа: ");
             int n = int.Parse(Console.ReadLine());
             int x;
